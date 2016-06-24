@@ -28,6 +28,10 @@ export class PlayComponent {
 
   stopNote() {
     console.log("stopNote()");
-    this.currentOscillator.stop(0);
+    if (this.currentOscillator !== undefined)
+    {
+        this.currentOscillator.stop(0);
+    }
+    
   }
 }
