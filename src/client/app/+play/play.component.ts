@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 
 /**
  * This class represents the lazy loaded PlayComponent.
@@ -9,11 +10,31 @@ import { Component } from '@angular/core';
   templateUrl: 'play.component.html',
   styleUrls: ['play.component.css']
 })
-export class PlayComponent {
+export class PlayComponent implements OnInit, OnDestroy{
   audioContext: AudioContext;
   currentOscillator: OscillatorNode;
-  constructor() {
+
+  private content: number;
+  private sub: any;
+
+  constructor(
+    private router: Router) {
     this.audioContext = new AudioContext();
+  }
+
+  ngOnInit() {
+    this.sub = this.router
+      .routerState
+      .queryParams
+      .subscribe(params => {
+        this.content = +params['content'];
+      });
+
+    console.log("Content: " + this.content.toString());
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   startNote(frequency: number) {
