@@ -2,9 +2,12 @@
   Make some music!
 </h2>
 
+<h2>
+  Remaining: {{noteCount}}
+</h2>
 <table>
-  <tr *ngFor='let row of rowRange(rowCount)'>
-    <td *ngFor='let col of columnRange(columnCount)' width='100' height='100' style="background-color: rgb(255, 0, 0)"></td>
+  <tr *ngFor="let row of rowRange(rowCount); let rowIndex=index">
+    <td *ngFor="let col of columnRange(columnCount); let colIndex=index" width='100' height='100' [ngStyle]="{'background-color':getBoxColor(rowIndex * columnCount + colIndex)}"></td>
   </tr>
 </table>
 
