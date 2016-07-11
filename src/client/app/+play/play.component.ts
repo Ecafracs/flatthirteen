@@ -58,12 +58,18 @@ export class PlayComponent implements OnInit, OnDestroy{
       .routerState
       .queryParams
       .subscribe(params => {
-        rowCount = +params['N'];
-        columnCount = +params['B'];
-        noteCountMax = +params['X'];
-        notesPerColumnMax = +params['P'];
-        tempo = +params['T'];
-        difficulty = +params['D'];
+        rowCount = +params['n'];
+        //rowCount = +params['notes'];
+        columnCount = +params['b'];
+        //columnCount = +params['beats'];
+        noteCountMax = +params['x'];
+        //noteCountMax = +params['max'];
+        notesPerColumnMax = +params['p'];
+        //notesPerColumnMax = +params['polyphony'];
+        tempo = +params['t'];
+        //tempo = +params['tempo'];
+        difficulty = +params['d'];
+        //difficulty = +params['difficulty'];
       });
 
     console.log("rowCount: " + rowCount);
