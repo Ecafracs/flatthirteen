@@ -47,6 +47,15 @@ export class PlayComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit() {
+    this.loadConfiguration();
+    this.generateBoxStatus();
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  loadConfiguration() {
     var rowCount: number;
     var columnCount: number;
     var noteCountMax: number;
@@ -58,55 +67,72 @@ export class PlayComponent implements OnInit, OnDestroy{
       .routerState
       .queryParams
       .subscribe(params => {
-        rowCount = +params['n'];
-        //rowCount = +params['notes'];
-        columnCount = +params['b'];
-        //columnCount = +params['beats'];
-        noteCountMax = +params['x'];
-        //noteCountMax = +params['max'];
-        notesPerColumnMax = +params['p'];
-        //notesPerColumnMax = +params['polyphony'];
-        tempo = +params['t'];
-        //tempo = +params['tempo'];
-        difficulty = +params['d'];
-        //difficulty = +params['difficulty'];
+        if (params.hasOwnProperty('n')) {
+          rowCount = +params['n'];
+        }
+        else {
+          rowCount = +params['notes'];
+        }
+        console.log("rowCount: " + rowCount);
+        if (isNaN(rowCount) !== true) {
+          this.rowCount = rowCount;
+        }
+
+        if (params.hasOwnProperty('b')) {
+          columnCount = +params['b'];
+        }
+        else {
+          columnCount = +params['beats'];
+        }
+        console.log("columnCount: " + columnCount);
+        if (isNaN(columnCount) !== true) {
+          this.columnCount = columnCount;
+        }
+
+        if (params.hasOwnProperty('x')) {
+          noteCountMax = +params['x'];
+        }
+        else {
+          noteCountMax = +params['max'];
+        }
+        console.log("noteCountMax: " + noteCountMax);
+        if (isNaN(noteCountMax) !== true) {
+          this.noteCountMax = noteCountMax;
+        }
+
+        if (params.hasOwnProperty('p')) {
+          notesPerColumnMax = +params['p'];
+        }
+        else {
+          notesPerColumnMax = +params['polyphony'];
+        }
+        console.log("notesPerColumnMax: " + notesPerColumnMax);
+        if (isNaN(notesPerColumnMax) !== true) {
+          this.notesPerColumnMax = notesPerColumnMax;
+        }
+
+        if (params.hasOwnProperty('t')) {
+          tempo = +params['t'];
+        }
+        else {
+          tempo = +params['tempo'];
+        }
+        console.log("tempo: " + tempo);
+        if (isNaN(tempo) !== true) {
+          this.tempo = tempo;
+        }
+
+        if (params.hasOwnProperty('d')) {
+          difficulty = +params['d'];
+        }
+        else {
+          difficulty = +params['difficulty'];
+        }
+        console.log("difficulty: " + difficulty);
+        if (isNaN(difficulty) !== true) {
+          this.difficulty = difficulty;
+        }
       });
-
-    console.log("rowCount: " + rowCount);
-    if (isNaN(rowCount) !== true) {
-      this.rowCount = rowCount;
-    }
-
-    console.log("columnCount: " + columnCount);
-    if (isNaN(columnCount) !== true) {
-      this.columnCount = columnCount;
-    }
-
-    console.log("noteCountMax: " + noteCountMax);
-    if (isNaN(noteCountMax) !== true) {
-      this.noteCountMax = noteCountMax;
-    }
-
-    console.log("notesPerColumnMax: " + notesPerColumnMax);
-    if (isNaN(notesPerColumnMax) !== true) {
-      this.notesPerColumnMax = notesPerColumnMax;
-    }
-
-    console.log("tempo: " + tempo);
-    if (isNaN(tempo) !== true) {
-      this.tempo = tempo;
-    }
-
-    console.log("difficulty: " + difficulty);
-    if (isNaN(difficulty) !== true) {
-      this.difficulty = difficulty;
-    }
-
-    this.generateBoxStatus();
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
   }
 
   generateBoxStatus() {
