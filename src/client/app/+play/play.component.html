@@ -3,8 +3,13 @@
 </h2>
 
 <h2>
+  Tempo: {{tempo}}
+  <br>
+  Difficulty: {{difficulty}}
+  <br>
   Remaining: {{noteCount}}
 </h2>
+
 <table>
   <tr *ngFor="let row of rowRange(rowCount); let rowIndex=index">
     <td *ngFor="let col of columnRange(columnCount); let colIndex=index" width='100' height='100' [ngStyle]="{'background-color':getBoxColor(rowIndex * columnCount + colIndex)}"></td>

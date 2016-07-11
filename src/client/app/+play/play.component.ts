@@ -27,6 +27,9 @@ export class PlayComponent implements OnInit, OnDestroy{
 
   private noteStatuses: Array<string>;
 
+  private tempo: number;
+  private difficulty: number;
+
   constructor(
     private router: Router) {
     this.audioContext = new AudioContext();
@@ -38,6 +41,9 @@ export class PlayComponent implements OnInit, OnDestroy{
 
     this.noteCountMax = 3;
     this.notesPerColumnMax = 2;
+
+    this.tempo = 60;
+    this.difficulty = 1;
   }
 
   ngOnInit() {
@@ -45,6 +51,8 @@ export class PlayComponent implements OnInit, OnDestroy{
     var columnCount: number;
     var noteCountMax: number;
     var notesPerColumnMax: number;
+    var tempo: number;
+    var difficulty: number;
 
     this.sub = this.router
       .routerState
@@ -54,6 +62,8 @@ export class PlayComponent implements OnInit, OnDestroy{
         columnCount = +params['B'];
         noteCountMax = +params['X'];
         notesPerColumnMax = +params['P'];
+        tempo = +params['T'];
+        difficulty = +params['D'];
       });
 
     console.log("rowCount: " + rowCount);
@@ -74,6 +84,16 @@ export class PlayComponent implements OnInit, OnDestroy{
     console.log("notesPerColumnMax: " + notesPerColumnMax);
     if (isNaN(notesPerColumnMax) !== true) {
       this.notesPerColumnMax = notesPerColumnMax;
+    }
+
+    console.log("tempo: " + tempo);
+    if (isNaN(tempo) !== true) {
+      this.tempo = tempo;
+    }
+
+    console.log("difficulty: " + difficulty);
+    if (isNaN(difficulty) !== true) {
+      this.difficulty = difficulty;
     }
 
     this.generateBoxStatus();
