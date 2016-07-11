@@ -2,6 +2,15 @@
   Make some music!
 </h2>
 
+<table>
+  <tr *ngFor='let row of rowRange(rowCount)'>
+    <td *ngFor='let col of columnRange(columnCount)' width='100' height='100' style="background-color: rgb(255, 0, 0)"></td>
+  </tr>
+</table>
+
+<br>
+<br>
+
 <div (mousedown)="startNote(523.25)" (mouseup)="stopNote()" (mouseout)="stopNote()" id="C5" style="position: relative; width: 728px; height: 50px; background-color: rgb(255, 0, 0);"></div>
 <div (mousedown)="startNote(493.88)" (mouseup)="stopNote()" (mouseout)="stopNote()" id="B4" style="position: relative; width: 728px; height: 50px; background-color: rgb(148, 0, 211);"></div>
 <div (mousedown)="startNote(440.00)" (mouseup)="stopNote()" (mouseout)="stopNote()" id="A4" style="position: relative; width: 728px; height: 50px; background-color: rgb(75, 0, 130);"></div>
