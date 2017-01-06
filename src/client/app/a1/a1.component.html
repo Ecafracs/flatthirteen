@@ -1,0 +1,8 @@
+<div class="grid">
+  <div class="strip" *ngFor="let strip of gridState; let i = index">
+    <div class="beat" *ngFor="let state of strip; let j = index"
+         (click)="setBeatState(i, j)">
+      <div class="quarter" *ngIf="state === 1"></div>
+    </div>
+  </div>
+</div>
