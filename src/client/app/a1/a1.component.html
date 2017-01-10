@@ -5,4 +5,10 @@
       <div class="quarter" *ngIf="state === 1"></div>
     </div>
   </div>
+  <div class="count">{{count}}</div>
+  <div class="position" [style.left]="(gridLoop.progress * 100) + '%'"></div>
+</div>
+<div class="info">
+  Loop: {{iterations}}
+  Beat: {{beat}}
 </div>

@@ -11,13 +11,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  numStrips: number = 2;
-  numBeats: number = 4;
-  gridState: number[][];
-
   /**
-   * Creates an instance of the HomeComponent with the injected
-   * NameListService.
+   * Creates an instance of the HomeComponent.
    */
   constructor() {}
 
@@ -25,22 +20,6 @@ export class HomeComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    this.gridState = [];
-    for (let i = 0; i < this.numStrips; i++) {
-      let strip: number[] = [];
-      for (let j = 0; j < this.numBeats; j++) {
-        strip.push(0);
-      }
-      this.gridState.push(strip);
-    }
-  }
 
-  setBeatState(stripIndex: number, beatIndex: number) {
-    this.gridState[stripIndex][beatIndex] =
-      this.gridState[stripIndex][beatIndex] ? 0 : 1;
-  }
-
-  getBeatStateClass(state: number) {
-    return 'state' + state;
   }
 }

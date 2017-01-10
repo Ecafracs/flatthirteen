@@ -332,6 +332,29 @@ declare module Tone {
     dispose(): Tone.Expr;
   }
 
+  var Event: {
+    new(callback: (time: Tone.Time, chord: any) => any, value: any): Tone.Event;
+  };
+
+  interface Event extends Tone {
+    callback: (time: Tone.Time, chord: any) => any;
+    value: any;
+    probability: number;
+    humanize: boolean | Tone.Time;
+    loop: boolean | number;
+    loopEnd: Tone.Time;
+    loopStart: Tone.Time;
+    mute: boolean;
+    playbackRate: number;
+    readonly progress: number;
+    state: string;
+    startOffset: number;
+    dispose(): Tone.Event;
+    start(time: Tone.Time): Tone.Event;
+    stop(time: Tone.Time): Tone.Event;
+    cancel(time: Tone.Time): Tone.Event;
+  }
+
   var FeedbackCombFilter: {
     new(minDelay?: number, maxDelay?: number): Tone.FeedbackCombFilter;
   };
@@ -538,8 +561,27 @@ declare module Tone {
     dispose(): Tone.Limiter;
   }
 
+  var Loop: {
+    new(callback: (e: Object) => any, time?: Tone.Time): Tone.Loop;
+  };
+
+  interface Loop extends Tone {
+    state: string;
+    progress: number;
+    interval: Tone.Time;
+    playbackRate: Tone.Time;
+    humanize: boolean | Tone.Time;
+    probability: number;
+    mute: boolean;
+    iterations: number;
+    dispose(): Tone.Loop;
+    start(time?: Tone.Time): Tone.Loop;
+    stop(time?: Tone.Time): Tone.Loop;
+    cancel(time?: Tone.Time): Tone.Loop;
+  }
+
   var LowpassCombFilter: {
-    new(minDelay?: number, maxDelay?: number): Tone.LowpassCombFilter;
+    new(delay?: Tone.Time, resonance?: number, dampening?: number): Tone.LowpassCombFilter;
   };
 
   interface LowpassCombFilter extends Tone {
@@ -778,18 +820,6 @@ declare module Tone {
     max: number;
     min: number;
     dispose(): Tone.Normalize;
-  }
-
-  var Note: {
-    new(channel: any, time: Tone.Time, value: any): Tone.Note; //todo: channel: number|string, value: string|number|Object|Array
-  };
-
-  interface Note {
-    value: any; //todo: string | number | Object
-    parseScore(score: Object): Tone.Note[];
-    route(channel: any, callback?: (e: any) => any): void; //todo: string | number
-    unroute(channel: any, callback?: (e: any) => any): void; //todo: string | number;
-    dispose(): Tone.Note;
   }
 
   var OmniOscillator: {
@@ -1131,41 +1161,48 @@ declare module Tone {
   }
 
   var Transport: {
-    new(): Tone.Transport;
-  };
-
-  interface Transport extends Tone {
     bpm: Tone.Signal;
     loop: boolean;
     loopEnd: Tone.Time;
     loopStart: Tone.Time;
     position: string;
+    PPQ: number;
+    readonly progress: number;
+    seconds: number;
     state: TransportState;
     swing: number;
     swingSubdivision: Tone.Time;
+    ticks: number;
     timeSignature: number;
-    clearInterval(rmInterval: number): boolean;
-    clearIntervals(): void;
-    clearTimeline(timelineID: number): boolean;
-    clearTimelines(): void;
-    clearTimeout(timeoutID: number): boolean;
-    clearTimeouts(): void;
+    clear(eventId: number): Tone.Transport;
+    cancel(after: Tone.Time): Tone.Transport;
     dispose(): Tone.Transport;
-    nextBeat(subdivision?: string): number;
+    nextSubdivision(subdivision: Tone.Time): number;
     pause(time: Tone.Time): Tone.Transport;
-    setInterval(callback: (e: any) => any, interval: Tone.Time): number;
+    schedule(callback: (e: any) => any, time: Tone.Time): number;
+    scheduleOnce(callback: (e: any) => any, time: Tone.Time): number;
+    scheduleRepeat(callback: (e: any) => any, interval: Tone.Time, startTime: Tone.Time, duration: Tone.Time): number;
     setLoopPoints(startPosition: Tone.Time, endPosition: Tone.Time): Tone.Transport;
-    setTimeline(callback: (e: any) => any, timeout: Tone.Time): number;
-    setTimeout(callback: (e: any) => any, time: Tone.Time): number;
-    start(time: Tone.Time, offset?: Tone.Time): Tone.Transport;
+    start(time?: Tone.Time, offset?: Tone.Time): Tone.Transport;
     stop(time: Tone.Time): Tone.Transport;
     syncSignal(signal: Tone.Signal, ratio?: number): Tone.Transport;
-    syncSource(source: Tone.Source, delay: Tone.Time): Tone.Transport;
     unsyncSignal(signal: Tone.Signal): Tone.Transport;
-    unsyncSource(source: Tone.Source): Tone.Transport;
+  };
+
+  interface Transport extends Tone {
+
   }
 
   interface TransportState {
+  }
+
+  var Volume: {
+    new(decibels: number): Tone.Volume;
+  };
+
+  interface Volume extends Tone {
+    mute: boolean;
+    dispose(): Tone.Volume;
   }
 
   var WaveShaper: {
