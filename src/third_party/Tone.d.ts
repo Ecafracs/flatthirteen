@@ -1,65 +1,76 @@
-/// <reference path="WebAudio.d.ts" />
-
 // Type definitions for TONE.JS
 // Project: https://github.com/Tonejs/Tone.js
 // Definitions by: Luke Phillips <https://github.com/lukephills>
 //                 Pouya Kary <https://github.com/pmkary>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-//var Tone: {
-//    new(inputs?: number, outputs?: number): Tone;
-//}
-
 interface Tone {
   new(inputs?: number, outputs?: number): Tone;
+
+  input: GainNode | GainNode[];
+  output: GainNode | GainNode[];
+
+  set(params: Object | string, value?: number, rampTime?: Type.Time): Tone;
+  get(params?: string[] | string): Object;
+  toString(): string;
+
+  // CLASS VARS
   context: AudioContext;
-  input: GainNode;
-  output: GainNode;
-  chain(...nodes: any[]): Tone;
-  connect(unit: any, outputNum?:number, inputNum?:number): Tone;
-  connectSeries(...args: any[]): Tone;
-  connectParallel(...args: any[]): Tone;
-  dbToGain(db: number): number;
-  defaultArg(given: any, fallback: any): any;
-  disconnect(outputNum?:number): Tone;
+  readonly bufferSize: number;
+  readonly blockTime: number;
+  readonly sampleTime: number;
+
+  // CONNECTIONS
   dispose(): Tone;
-  equalPowerScale(percent:number): number;
-  expScale(gain: number): number;
-  extend(child: ()=>any, parent?: ()=>any): void;
-  fan(...nodes: any[]): Tone;
-  frequencyToNote(freq:number):string;
-  frequencyToSeconds(freq:number):number;
-  gainToDb(gain: number): number;
-  get(params?:any): any;
-  interpolate(input: number, outputMin: number, outputMax: number): number;
-  isFrequency(freq: number): boolean;
-  isFunction(arg: any): boolean;
-  isUndef(arg: any): boolean;
-  midiToNote(midiNumber: number): string;
   noGC(): Tone;
-  normalize(input: number, inputMin: number, inputMax: number): number;
-  notationToSeconds(notation: string, bpm?: number, timeSignature?: number): number;
-  noteToFrequency(note: string): number;
-  noteToMidi(note: string): number;
+  connect(unit: Tone | AudioParam | AudioNode, outputNum?: number, inputNum?: number): Tone;
+  disconnect(outputNum?:number | AudioNode): Tone;
+  connectSeries(...args: Array<Tone | AudioParam | AudioNode>): Tone;
+  chain(...nodes: Array<Tone | AudioParam | AudioNode>): Tone;
+  fan(...nodes: Array<Tone | AudioParam | AudioNode>): Tone;
+
+  // UTILITIES / HELPERS / MATHS
+  defaultArg(given: any, fallback: any): any;
+  optionsObject(values: any[], keys: string[], defaults?:Object): Object;
+
+  // TYPE CHECKING
+  isUndef(arg: any): boolean;
+  isFunction(arg: any): boolean;
+  isNumber(arg: any): boolean;
+  isObject(arg: any): boolean;
+  isBoolean(arg: any): boolean;
+  isArray(arg: any): boolean;
+  isString(arg: any): boolean;
+
+  // GAIN CONVERSIONS
+  equalPowerScale(percent: Type.NormalRange): Type.NormalRange;
+  dbToGain(db: Type.Decibels): number;
+  gainToDb(gain: Type.NormalRange): Type.Decibels;
+  intervalToFrequencyRatio(interval: Type.Interval): number;
+
+  // TIMING
   now(): number;
-  optionsObject(values: Array<any>, keys: Array<string>, defaults?:Object): Object;
-  receive(channelName: string, input?: AudioNode): Tone;
-  samplesToSeconds(samples: number): number;
-  secondsToFrequency(seconds: number): number;
+
+  // INHERITANCE
+  extend(child: ()=>any, parent?: ()=>any): void;
+
+  // BUSES
   send(channelName: string, amount?: number): Tone;
-  set(params: any, value?: number, rampTime?: Tone.Time): Tone;
-  setContext(ctx: AudioContext): void;
-  setPreset(presetName: string): Tone;
-  startMobile(): void;
-  toFrequency(note: Tone.Frequency, now?: number): number;
+  receive(channelName: string, input?: AudioNode): Tone;
+
+  // Type conversion
+  toSeconds(time?: Type.Time, now?: number): Type.Seconds;
+  toFrequency(note: Tone.Frequency, now?: number): Type.Frequency;
+  toTicks(time?: Type.Time): Type.Ticks;
+
+  // Master
   toMaster(): Tone;
-  toSamples(time: Tone.Time): number;
-  toSeconds(time?: number, now?: number): number;
 }
 
 declare module Tone {
 
-  var Abs: {
+  import AudioRange = Type.AudioRange;
+  let Abs: {
     new(): Tone.Abs;
   };
 
@@ -67,7 +78,7 @@ declare module Tone {
     dispose(): Tone.Abs;
   }
 
-  var Add: {
+  let Add: {
     new(value?: number): Tone.Add;
   };
 
@@ -75,15 +86,15 @@ declare module Tone {
     dispose(): Tone.Add;
   }
 
-  var AmplitudeEnvelope: {
-    new(attack?: any, decay?: Tone.Time, sustain?: number, release?: Tone.Time): Tone.AmplitudeEnvelope; //TODO: Change 'any' to 'Tone.Time | Object'
+  let AmplitudeEnvelope: {
+    new(attack?: Type.Time | Object, decay?: Type.Time, sustain?: Type.NormalRange, release?: Type.Time): Tone.AmplitudeEnvelope;
   };
 
   interface AmplitudeEnvelope extends Tone.Envelope {
     dispose(): Tone.AmplitudeEnvelope;
   }
 
-  var AMSynth: {
+  let AMSynth: {
     new(options?: Object): Tone.AMSynth;
   };
 
@@ -93,19 +104,9 @@ declare module Tone {
     harmonicity: number;
     modulator: Tone.MonoSynth;
     dispose(): Tone.AMSynth;
-    triggerEnvelopeAttack(time?: Tone.Time, velocity?: number): Tone.AMSynth;
-    triggerEnvelopeRelease(time?: Tone.Time): Tone.AMSynth;
   }
 
-  var AND: {
-    new(inputCount?: number): Tone.AND;
-  };
-
-  interface AND extends Tone.SignalBase {
-    dispose(): Tone.AND;
-  }
-
-  var AudioToGain: {
+  let AudioToGain: {
     new(): Tone.AudioToGain;
   };
 
@@ -113,36 +114,36 @@ declare module Tone {
     dispose(): Tone.AudioToGain;
   }
 
-  var AutoPanner: {
-    new(frequency?: any): Tone.AutoPanner; //TODO: Number || Object
+  let AutoPanner: {
+    new(frequency?: Type.Time | Object): Tone.AutoPanner;
   };
 
   interface AutoPanner extends Effect {
-    amount: Tone.Signal;
-    frequency: Tone.Signal;
+    depth: Type.NormalRange;
+    frequency: Type.Time | Object;
     type: string;
     dispose(): Tone.AutoPanner;
-    start(Time?: Tone.Time): Tone.AutoPanner;
-    stop(Time?: Tone.Time): Tone.AutoPanner;
-    sync(): Tone.AutoPanner;
+    start(time?: Type.Time): Tone.AutoPanner;
+    stop(time?: Type.Time): Tone.AutoPanner;
+    sync(delay?: Type.Time): Tone.AutoPanner;
     unsync(): Tone.AutoPanner;
   }
 
-  var AutoWah: {
-    new(baseFrequency?: any, octaves?: number, sensitivity?: number): Tone.AutoWah; //Todo number | Object
+  let AutoWah: {
+    new(baseFrequency?: Type.Frequency | Object, octaves?: number, sensitivity?: number): Tone.AutoWah;
   };
 
   interface AutoWah extends Tone.Effect {
-    baseFrequency: Tone.Frequency;
+    baseFrequency: Type.Frequency;
     gain: Tone.Signal;
     octaves: number;
     Q: Tone.Signal;
-    sensitivity: number;
+    sensitivity: Type.Decibels;
     dispose(): Tone.AutoWah;
   }
 
-  var BitCrusher: {
-    new(bits: any): Tone.BitCrusher; //TODO: Number || Object
+  let BitCrusher: {
+    new(bits: number | Object): Tone.BitCrusher;
   };
 
   interface BitCrusher extends Tone.Effect {
@@ -150,26 +151,27 @@ declare module Tone {
     dispose(): Tone.BitCrusher;
   }
 
-  var Buffer: {
-    new(url: any): Tone.Buffer; //TODO: Change 'any' to 'AudioBuffer | string' when available
+  let Buffer: {
+    new(audioBuffer: AudioBuffer | string, onLoad: () => any, onError: () => any): Tone.Buffer;
   };
 
   interface Buffer extends Tone {
-    MAX_SIMULTANEOUS_DOWNLOADS: number;
-    duration: number; // Readonly
-    loaded: boolean; // Readonly
-    onload: (e: any) => any;
-    url: string; // Readonly
-    load(url: string, callback?: (e: any) => any): Tone.Buffer;
-    onerror();
-    onprogress();
+    readonly duration: number;
+    readonly length: number;
+    readonly loaded: boolean;
+    readonly numberOfChannels: number;
+    reverse: Boolean;
     dispose(): Tone.Buffer;
+    fromArray(array: Array<number>): Tone.Buffer;
     get(): AudioBuffer;
-    set(buffer: any): Tone.Buffer; //TODO: change any to AudioBuffer | Tone.Buffer
+    load(url: string, callback?: (e: any) => any): Tone.Buffer;
+    set(buffer: AudioBuffer | Tone.Buffer): Tone.Buffer;
+    slice(start: Type.Time, end: Type.Time): Tone.Buffer;
+    toArray(channel: number): Array<number>;
   }
 
-  var Chebyshev: {
-    new(order: any): Tone.Chebyshev; //TODO: Number || Object
+  let Chebyshev: {
+    new(order: number | Object): Tone.Chebyshev;
   };
 
   interface Chebyshev extends Tone.Effect {
@@ -178,19 +180,20 @@ declare module Tone {
     dispose(): Tone.Chebyshev;
   }
 
-  var Chorus: {
-    new(rate?: any, delayTime?: number, depth?: number): Tone.Chorus;
+  let Chorus: {
+    new(rate?: Type.Frequency | Object, delayTime?: Type.Milliseconds, depth?: Type.NormalRange): Tone.Chorus;
   };
 
   interface Chorus extends Tone.StereoXFeedbackEffect {
-    delayTime: number
-    depth: number;
+    delayTime: Type.Milliseconds;
+    depth: Type.NormalRange;
     frequency: Tone.Signal;
+    spread: Type.Degrees;
     type: string;
     dispose(): Tone.Chorus;
   }
 
-  var Clip: {
+  let Clip: {
     new(min: number, max: number): Tone.Clip;
   };
 
@@ -200,7 +203,7 @@ declare module Tone {
     dispose(): Tone.Clip;
   }
 
-  var Compressor: {
+  let Compressor: {
     new(threshold?: any, ratio?: number): Tone.Compressor; //TODO: Number || Object
   };
 
@@ -213,7 +216,7 @@ declare module Tone {
     dispose(): Tone.Compressor;
   }
 
-  var Convolver: {
+  let Convolver: {
     new(url: any): Tone.Convolver; //TODO: Change any to 'string | AudioBuffer' when available
   };
 
@@ -223,7 +226,7 @@ declare module Tone {
     dispose(): Tone.Convolver;
   }
 
-  var CrossFade: {
+  let CrossFade: {
     new(initialFade?: number): Tone.CrossFade;
   };
 
@@ -234,7 +237,7 @@ declare module Tone {
     dispose(): Tone.CrossFade;
   }
 
-  var Distortion: {
+  let Distortion: {
     new(distortion: any): Tone.Distortion; //TODO: Number || Object
   };
 
@@ -244,7 +247,7 @@ declare module Tone {
     dispose(): Tone.Distortion;
   }
 
-  var DuoSynth: {
+  let DuoSynth: {
     new(options?: any): Tone.DuoSynth;
   };
 
@@ -255,11 +258,11 @@ declare module Tone {
     vibratoRate: Tone.Signal;
     voice0: Tone.MonoSynth;
     voice1: Tone.MonoSynth;
-    triggerEnvelopeAttack(time?: Tone.Time, velocity?: number): Tone.DuoSynth;
-    triggerEnvelopeRelease(time?: Tone.Time): Tone.DuoSynth;
+    triggerEnvelopeAttack(time?: Type.Time, velocity?: number): Tone.DuoSynth;
+    triggerEnvelopeRelease(time?: Type.Time): Tone.DuoSynth;
   }
 
-  var Effect: {
+  let Effect: {
     new(initialWet?: number): Tone.Effect;
   };
 
@@ -269,22 +272,22 @@ declare module Tone {
     dispose(): Tone.Effect;
   }
 
-  var Envelope: {
-    new(attack: any, decay?: Tone.Time, sustain?: number, release?: Tone.Time): Tone.Envelope;  //TODO: Change 'any' to 'Tone.Time | Object'
+  let Envelope: {
+    new(attack: any, decay?: Type.Time, sustain?: number, release?: Type.Time): Tone.Envelope;  //TODO: Change 'any' to 'Type.Time | Object'
   };
 
   interface Envelope extends Tone {
-    attack: Tone.Time;
-    decay: Tone.Time;
-    release: Tone.Time;
+    attack: Type.Time;
+    decay: Type.Time;
+    release: Type.Time;
     sustain: number;
     dispose(): Tone.Envelope;
-    triggerAttack(time?: Tone.Time, velocity?: number): Tone.Envelope;
-    triggerAttackRelease(duration: Tone.Time, time?: Tone.Time, velocity?: number): Tone.Envelope;
-    triggerRelease(time?: Tone.Time): Tone.Envelope;
+    triggerAttack(time?: Type.Time, velocity?: number): Tone.Envelope;
+    triggerAttackRelease(duration: Type.Time, time?: Type.Time, velocity?: number): Tone.Envelope;
+    triggerRelease(time?: Type.Time): Tone.Envelope;
   }
 
-  var EQ3: {
+  let EQ3: {
     new(lowLevel?: any, midLevel?: number, highLevel?: number): Tone.EQ3; //TODO: Change 'any' to 'number | Object'
   };
 
@@ -297,7 +300,7 @@ declare module Tone {
     dispose(): Tone.EQ3;
   }
 
-  var Equal: {
+  let Equal: {
     new(value: number): Tone.Equal;
   };
 
@@ -306,7 +309,7 @@ declare module Tone {
     dispose(): Tone.Equal;
   }
 
-  var EqualPowerGain: {
+  let EqualPowerGain: {
     new(): Tone.EqualPowerGain;
   };
 
@@ -314,7 +317,7 @@ declare module Tone {
     dispose(): Tone.EqualPowerGain;
   }
 
-  var EqualZero: {
+  let EqualZero: {
     new(): Tone.EqualZero;
   };
 
@@ -322,7 +325,7 @@ declare module Tone {
     dispose(): Tone.EqualZero;
   }
 
-  var Expr: {
+  let Expr: {
     new(expr: string): Tone.Expr;
   };
 
@@ -332,40 +335,40 @@ declare module Tone {
     dispose(): Tone.Expr;
   }
 
-  var Event: {
-    new(callback: (time: Tone.Time, chord: any) => any, value: any): Tone.Event;
+  let Event: {
+    new(callback: (time: Type.Time, chord: any) => any, value: any): Tone.Event;
   };
 
   interface Event extends Tone {
-    callback: (time: Tone.Time, chord: any) => any;
+    callback: (time: Type.Time, chord: any) => any;
     value: any;
     probability: number;
-    humanize: boolean | Tone.Time;
+    humanize: boolean | Type.Time;
     loop: boolean | number;
-    loopEnd: Tone.Time;
-    loopStart: Tone.Time;
+    loopEnd: Type.Notation;
+    loopStart: Type.Notation;
     mute: boolean;
     playbackRate: number;
     readonly progress: number;
     state: string;
     startOffset: number;
     dispose(): Tone.Event;
-    start(time: Tone.Time): Tone.Event;
-    stop(time: Tone.Time): Tone.Event;
-    cancel(time: Tone.Time): Tone.Event;
+    start(time: Type.Time): Tone.Event;
+    stop(time: Type.Time): Tone.Event;
+    cancel(time: Type.Time): Tone.Event;
   }
 
-  var FeedbackCombFilter: {
+  let FeedbackCombFilter: {
     new(minDelay?: number, maxDelay?: number): Tone.FeedbackCombFilter;
   };
 
   interface FeedbackCombFilter extends Tone {
-    delayTime: Tone.Time;
+    delayTime: Type.Time;
     resonance: Tone.Signal;
     dispose(): Tone.FeedbackCombFilter;
   }
 
-  var FeedbackDelay: {
+  let FeedbackDelay: {
     new(delayTime: any): Tone.FeedbackDelay;
   };
 
@@ -374,7 +377,7 @@ declare module Tone {
     dispose(): Tone.FeedbackDelay;
   }
 
-  var FeedbackEffect: {
+  let FeedbackEffect: {
     new(initialFeedback?: any): Tone.FeedbackEffect;
   };
 
@@ -383,7 +386,7 @@ declare module Tone {
     dispose(): Tone.FeedbackEffect;
   }
 
-  var Filter: {
+  let Filter: {
     new(freq?: any, type?: string, rolloff?: number): Tone.Filter; //TODO: Number || Object
   };
 
@@ -397,7 +400,7 @@ declare module Tone {
     dispose(): Tone.Filter;
   }
 
-  var FMSynth: {
+  let FMSynth: {
     new(options?: any): Tone.FMSynth;
   };
 
@@ -408,21 +411,21 @@ declare module Tone {
     modulationIndex: number;
     modulator: Tone.MonoSynth;
     dispose(): Tone.FMSynth;
-    triggerEnvelopeAttack(time?: Tone.Time, velocity?: number): Tone.FMSynth;
-    triggerEnvelopeRelease(time?: Tone.Time): Tone.FMSynth;
+    triggerEnvelopeAttack(time?: Type.Time, velocity?: number): Tone.FMSynth;
+    triggerEnvelopeRelease(time?: Type.Time): Tone.FMSynth;
   }
 
-  var Follower: {
-    new(attack?: Tone.Time, release?: Tone.Time): Tone.Follower;
+  let Follower: {
+    new(attack?: Type.Time, release?: Type.Time): Tone.Follower;
   };
 
   interface Follower extends Tone {
-    attack: Tone.Time;
-    release: Tone.Time;
+    attack: Type.Time;
+    release: Type.Time;
     dispose(): Tone.Follower;
   }
 
-  var Freeverb: {
+  let Freeverb: {
     new(roomSize?: any, dampening?: number): Tone.Freeverb;
   };
 
@@ -432,56 +435,54 @@ declare module Tone {
     dispose(): Tone.Freeverb;
   }
 
-  class TimeBase {
-    set(exprString: string): TimeBase;
+  let TimeBase: {
+    new(val: Type.Time, units?: string): Tone.TimeBase;
+  };
 
-    add(val: Time, units?: string): TimeBase;
-
-    sub(val: Time, units?: string): TimeBase;
-
-    mult(val: Time, units?: string): TimeBase;
-
-    div(val: Time, units?: string): TimeBase;
-
+  interface TimeBase extends Tone {
+    set(exprString: string): Tone.TimeBase;
+    clone(): Tone.TimeBase;
+    copy(time: Tone.TimeBase): Tone.TimeBase;
+    add(val: Type.Time, units?: string): TimeBase;
+    sub(val: Type.Time, units?: string): TimeBase;
+    mult(val: Type.Time, units?: string): TimeBase;
+    div(val: Type.Time, units?: string): TimeBase;
     eval(): number;
-
-    dispose: TimeBase;
+    dispose(): TimeBase;
   }
 
-  class Frequency extends TimeBase {
-    constructor(val: string | number, units?: string): TimeBase;
+  let Frequency: {
+    new(val: Type.Time, units?: string): Tone.Frequency;
+  };
 
-    toMidi(): number;
+  interface Frequency extends TimeBase {
+    transpose(interval: number): Tone.Frequency;
+    harmonize(intervals: Array<number>): Tone.Frequency;
 
-    toNote(): string;
+    // UNIT CONVERSIONS
+    toMidi(): Type.MIDI;
+    toNote(): Type.Note;
+    toSeconds(): Type.Seconds;
+    toFrequency(): Type.Hertz;
+    toTicks(): Type.Ticks;
 
-    transpose(interval: number): Frequency;
-
-    harmonize(intervals: number[ ]);
-
-    Frequency;
-
-    toSeconds(): number;
-
-    toTicks(): number;
-
-    midiToFrequency(midi: string): Frequency;
-
-    frequencyToMidi(frequency: Frequency): string;
+    // FREQUENCY CONVERSIONS
+    midiToFrequency(midi: number): Tone.Frequency;
+    frequencyToMidi(frequency: Tone.Frequency): number;
   }
 
-  var Gate: {
-    new(thresh?: number, attackTime?: Tone.Time, releaseTime?: Tone.Time): Tone.Gate;
+  let Gate: {
+    new(thresh?: number, attackTime?: Type.Time, releaseTime?: Type.Time): Tone.Gate;
   };
 
   interface Gate extends Tone {
-    attack: Tone.Time;
-    release: Tone.Time;
-    threshold: Tone.Time;
+    attack: Type.Time;
+    release: Type.Time;
+    threshold: Type.Time;
     dispose(): Tone.Gate;
   }
 
-  var GreaterThan: {
+  let GreaterThan: {
     new(value?: number): Tone.GreaterThan;
   };
 
@@ -489,7 +490,7 @@ declare module Tone {
     dispose(): Tone.GreaterThan;
   }
 
-  var GreaterThanZero: {
+  let GreaterThanZero: {
     new(): Tone.GreaterThanZero;
   };
 
@@ -497,7 +498,7 @@ declare module Tone {
     dispose(): Tone.GreaterThanZero;
   }
 
-  var IfThenElse: {
+  let IfThenElse: {
     new(): Tone.IfThenElse;
   };
 
@@ -505,19 +506,19 @@ declare module Tone {
     dispose(): Tone.IfThenElse;
   }
 
-  var Instrument: {
+  let Instrument: {
     new(): Tone.Instrument;
   };
 
   interface Instrument extends Tone {
     volume: Tone.Signal;
-    triggerAttack(note: any, time?: Tone.Time, velocity?: number): Tone.Instrument; //Todo: string | number
-    triggerAttackRelease(note: any, duration: Tone.Time, time?: Tone.Time, velocity?: number): Tone.Instrument; //Todo: string | number
-    triggerRelease(time?: Tone.Time): Tone.Instrument;
+    triggerAttack(note: any, time?: Type.Time, velocity?: number): Tone.Instrument; //Todo: string | number
+    triggerAttackRelease(note: any, duration: Type.Time, time?: Type.Time, velocity?: number): Tone.Instrument; //Todo: string | number
+    triggerRelease(time?: Type.Time): Tone.Instrument;
     dispose(): Tone.Instrument;
   }
 
-  var JCReverb: {
+  let JCReverb: {
     new(roomSize: number): Tone.JCReverb; //TODO: Number || Object
   };
 
@@ -526,7 +527,7 @@ declare module Tone {
     dispose(): Tone.JCReverb;
   }
 
-  var LessThan: {
+  let LessThan: {
     new(value?: number): Tone.LessThan;
   };
 
@@ -534,8 +535,8 @@ declare module Tone {
     dispose(): Tone.LessThan;
   }
 
-  var LFO: {
-    new(frequency?: Tone.Time, outputMin?: number, outputMax?: number): Tone.LFO; //TODO: Number || Object
+  let LFO: {
+    new(frequency?: Type.Time, outputMin?: number, outputMax?: number): Tone.LFO; //TODO: Number || Object
   };
 
   interface LFO extends Tone.Oscillator {
@@ -547,13 +548,13 @@ declare module Tone {
     phase: number;
     type: string;
     dispose(): Tone.LFO;
-    start(time?: Tone.Time): Tone.LFO;
-    stop(time?: Tone.Time): Tone.LFO;
-    sync(delay?: Tone.Time): Tone.LFO;
+    start(time?: Type.Time): Tone.LFO;
+    stop(time?: Type.Time): Tone.LFO;
+    sync(delay?: Type.Time): Tone.LFO;
     unsync(): Tone.LFO;
   }
 
-  var Limiter: {
+  let Limiter: {
     new(threshold: AudioParam): Tone.Limiter;
   };
 
@@ -561,38 +562,38 @@ declare module Tone {
     dispose(): Tone.Limiter;
   }
 
-  var Loop: {
-    new(callback: (e: Object) => any, time?: Tone.Time): Tone.Loop;
+  let Loop: {
+    new(callback: (e: Object) => any, time?: Type.Time): Tone.Loop;
   };
 
   interface Loop extends Tone {
     state: string;
     progress: number;
-    interval: Tone.Time;
-    playbackRate: Tone.Time;
-    humanize: boolean | Tone.Time;
+    interval: Type.Time;
+    playbackRate: Type.Time;
+    humanize: boolean | Type.Time;
     probability: number;
     mute: boolean;
     iterations: number;
     dispose(): Tone.Loop;
-    start(time?: Tone.Time): Tone.Loop;
-    stop(time?: Tone.Time): Tone.Loop;
-    cancel(time?: Tone.Time): Tone.Loop;
+    start(time?: Type.Time): Tone.Loop;
+    stop(time?: Type.Time): Tone.Loop;
+    cancel(time?: Type.Time): Tone.Loop;
   }
 
-  var LowpassCombFilter: {
-    new(delay?: Tone.Time, resonance?: number, dampening?: number): Tone.LowpassCombFilter;
+  let LowpassCombFilter: {
+    new(delay?: Type.Time, resonance?: number, dampening?: number): Tone.LowpassCombFilter;
   };
 
   interface LowpassCombFilter extends Tone {
     dampening: Tone.Signal;
-    delayTime: Tone.Time;
+    delayTime: Type.Time;
     resonance: Tone.Signal;
     dispose(): Tone.LowpassCombFilter;
-    setDelayTimeAtTime(delayAmount: Tone.Time, time?: Tone.Time): Tone.LowpassCombFilter;
+    setDelayTimeAtTime(delayAmount: Type.Time, time?: Type.Time): Tone.LowpassCombFilter;
   }
 
-  var Master: Tone.Master;
+  let Master: Tone.Master;
 
   interface Master extends Tone {
     volume: Tone.Signal;
@@ -602,7 +603,7 @@ declare module Tone {
     send(node: any): Tone.Master; //todo: AudioNode | Tone
   }
 
-  var Max: {
+  let Max: {
     new(max?: number): Tone.Max;
   };
 
@@ -610,7 +611,7 @@ declare module Tone {
     dispose(): Tone.Max;
   }
 
-  var Merge: {
+  let Merge: {
     new(): Tone.Merge;
   };
 
@@ -620,7 +621,7 @@ declare module Tone {
     dispose(): Tone.Merge;
   }
 
-  var MembraneSynth: {
+  let MembraneSynth: {
     new(options?: Object): Tone.MembraneSynth;
   };
 
@@ -628,11 +629,11 @@ declare module Tone {
     oscillator: Tone.Oscillator;
     envelope: Tone.Envelope;
     octaves: number;
-    pitchDecay: Tone.Time;
+    pitchDecay: Type.Time;
     dispose(): Tone.MembraneSynth;
   }
 
-  var MetalSynth: {
+  let MetalSynth: {
     new(options?: Object): Tone.MetalSynth;
   };
 
@@ -644,11 +645,11 @@ declare module Tone {
     resonance: number
     octaves: number;
     dispose(): Tone.MetalSynth;
-    triggerAttack(time?: Tone.Time, velocity?: number): Tone.MetalSynth;
-    triggerAttackRelease(duration: Tone.Time, time?: Tone.Time, velocity?: number): Tone.MetalSynth;
+    triggerAttack(time?: Type.Time, velocity?: number): Tone.MetalSynth;
+    triggerAttackRelease(duration: Type.Time, time?: Type.Time, velocity?: number): Tone.MetalSynth;
   }
 
-  var Meter: {
+  let Meter: {
     new(channels?: number, smoothing?: number, clipMemory?: number): Tone.Meter;
   };
 
@@ -660,7 +661,7 @@ declare module Tone {
     isClipped(): boolean;
   }
 
-  var Microphone: {
+  let Microphone: {
     new(inputNum?: number): Tone.Microphone;
   };
 
@@ -668,7 +669,7 @@ declare module Tone {
     dispose(): Tone.Microphone;
   }
 
-  var MidSideEffect: {
+  let MidSideEffect: {
     new(): Tone.MidSideEffect;
   };
 
@@ -680,7 +681,7 @@ declare module Tone {
     dispose(): Tone.MidSideEffect;
   }
 
-  var Min: {
+  let Min: {
     new(min: number): Tone.Min;
   };
 
@@ -688,7 +689,7 @@ declare module Tone {
     dispose(): Tone.Min;
   }
 
-  var Modulo: {
+  let Modulo: {
     new(modulus: number, bits?: number): Tone.Modulo;
   };
 
@@ -697,7 +698,7 @@ declare module Tone {
     dispose(): Tone.Modulo;
   }
 
-  var Mono: {
+  let Mono: {
     new(): Tone.Mono;
   };
 
@@ -705,16 +706,16 @@ declare module Tone {
     dispose(): Tone.Mono;
   }
 
-  var Monophonic: {
+  let Monophonic: {
     new(): Tone.Monophonic;
   };
 
   interface Monophonic extends Tone.Instrument {
-    portamento: Tone.Time;
+    portamento: Type.Time;
     setNote(note: any): Tone.Monophonic; //Todo: number | string
   }
 
-  var MonoSynth: {
+  let MonoSynth: {
     new(options?: any): Tone.MonoSynth;
   };
 
@@ -726,11 +727,11 @@ declare module Tone {
     frequency: Tone.Signal;
     oscillator: Tone.OmniOscillator;
     dispose(): Tone.MonoSynth;
-    triggerEnvelopeAttack(time?: Tone.Time, velocity?: number): Tone.MonoSynth;
-    triggerEnvelopeRelease(time?: Tone.Time): Tone.MonoSynth;
+    triggerEnvelopeAttack(time?: Type.Time, velocity?: number): Tone.MonoSynth;
+    triggerEnvelopeRelease(time?: Type.Time): Tone.MonoSynth;
   }
 
-  var MultibandCompressor: {
+  let MultibandCompressor: {
     new(options: Object): Tone.MultibandCompressor;
   };
 
@@ -743,7 +744,7 @@ declare module Tone {
     dispose(): Tone.MultibandCompressor;
   }
 
-  var MultibandEQ: {
+  let MultibandEQ: {
     new(options?: any): Tone.MultibandEQ;
   };
 
@@ -759,7 +760,7 @@ declare module Tone {
     setGain(gain: number, band: number): void;
   }
 
-  var MultibandSplit: {
+  let MultibandSplit: {
     new(lowFrequency: number, highFrequency: number): Tone.MultibandSplit;
   };
 
@@ -772,7 +773,7 @@ declare module Tone {
     dispose(): Tone.MultibandSplit;
   }
 
-  var Multiply: {
+  let Multiply: {
     new(value?: number): Tone.Multiply;
   };
 
@@ -780,7 +781,7 @@ declare module Tone {
     dispose(): Tone.Multiply;
   }
 
-  var Negate: {
+  let Negate: {
     new(): Tone.Negate;
   };
 
@@ -788,7 +789,7 @@ declare module Tone {
     dispose(): Tone.Negate;
   }
 
-  var Noise: {
+  let Noise: {
     new(type: string): Tone.Noise;
   };
 
@@ -797,7 +798,7 @@ declare module Tone {
     dispose(): Tone.Noise;
   }
 
-  var NoiseSynth: {
+  let NoiseSynth: {
     new(options?: Object): Tone.NoiseSynth;
   };
 
@@ -807,12 +808,12 @@ declare module Tone {
     filterEnvelope: Tone.Envelope;
     noise: Tone.Noise;
     dispose(): Tone.NoiseSynth;
-    triggerAttack(time?: Tone.Time, velocity?: number): Tone.NoiseSynth;
-    triggerAttackRelease(duration: Tone.Time, time?: Tone.Time, velocity?: number): Tone.NoiseSynth;
-    triggerRelease(time?: Tone.Time): Tone.NoiseSynth;
+    triggerAttack(time?: Type.Time, velocity?: number): Tone.NoiseSynth;
+    triggerAttackRelease(duration: Type.Time, time?: Type.Time, velocity?: number): Tone.NoiseSynth;
+    triggerRelease(time?: Type.Time): Tone.NoiseSynth;
   }
 
-  var Normalize: {
+  let Normalize: {
     new(min?: number, max?: number): Tone.Normalize;
   };
 
@@ -822,7 +823,7 @@ declare module Tone {
     dispose(): Tone.Normalize;
   }
 
-  var OmniOscillator: {
+  let OmniOscillator: {
     new(frequency?: Tone.Frequency, type?: string): Tone.OmniOscillator; //TODO: Number || Object
   };
 
@@ -836,7 +837,7 @@ declare module Tone {
     dispose(): Tone.OmniOscillator;
   }
 
-  var OR: {
+  let OR: {
     new(inputCount?: number): Tone.OR;
   };
 
@@ -844,8 +845,8 @@ declare module Tone {
     dispose(): Tone.OR;
   }
 
-  var Oscillator: {
-    new(frequency?: any, type?: string): Tone.Oscillator; //todo: number | string
+  let Oscillator: {
+    new(frequency?: Type.Frequency, type?: string): Tone.Oscillator;
   };
 
   interface Oscillator extends Tone.Source {
@@ -853,13 +854,14 @@ declare module Tone {
     frequency: Tone.Signal;
     phase: number;
     type: string;
+    partials: number[];
     dispose(): Tone.Oscillator;
     syncFrequency(): Tone.Oscillator;
     unsyncFrequency(): Tone.Oscillator;
   }
 
-  var Panner: {
-    new(initialPan?: number): Tone.Panner;
+  let Panner: {
+    new(initialPan?: Type.AudioRange): Tone.Panner;
   };
 
   interface Panner extends Tone {
@@ -867,8 +869,33 @@ declare module Tone {
     dispose(): Tone.Panner;
   }
 
-  var PanVol: {
-    new(pan: number, volume: number): Tone.PanVol;
+  let Panner3D: {
+    new(positionX: number, positionY: number, positionZ: number): Panner3D;
+  };
+
+  interface Panner3D extends Tone {
+    positionX: number;
+    positionY: number;
+    positionZ: number;
+    orientationX: number;
+    orientationY: number;
+    orientationZ: number;
+    panningModel: string;
+    refDistance: number;
+    rolloffFactor: number;
+    distanceModel: string;
+    coneInnerAngle: Type.Degrees;
+    coneOuterAngle: Type.Degrees;
+    coneOuterGain: Type.Gain;
+    maxDistance: number;
+    dispose(): Tone.Panner3D;
+    setPosition(x: number, y: number, z: number): Tone.Panner3D;
+    setOrientation(x: number, y: number, z: number): Tone.Panner3D;
+
+  }
+
+  let PanVol: {
+    new(pan: Type.AudioRange, volume: number): Tone.PanVol;
   };
 
   interface PanVol extends Tone {
@@ -877,7 +904,29 @@ declare module Tone {
     dispose(): Tone.PanVol;
   }
 
-  var Phaser: {
+  let Param: {
+    new(param: AudioParam, units: Signal.Type, convert: boolean): Tone.Param;
+  };
+
+  interface Param extends Tone {
+    units: Signal.Type;
+    convert: boolean;
+    overridden: boolean;
+    value: number;
+    setValueAtTime(value: number, time: Type.Time): Tone.Param;
+    setRampPoint(now?: Type.Time): Tone.Param;
+    linearRampToValueAtTime(value: number, endTime: Type.Time): Tone.Param;
+    exponentialRampToValueAtTime(value: number, endTime: Type.Time): Tone.Param;
+    exponentialRampToValue(value: number, rampTime: Type.Time, startTime?: Type.Time): Tone.Param;
+    linearRampToValue(value: number, rampTime: Type.Time, startTime?: Type.Time): Tone.Param;
+    setTargetAtTime(value: number, startTime: Type.Time, timeConstant: number): Tone.Param;
+    setValueCurveAtTime(values: number[], startTime: Type.Time, duration: Type.Time): Tone.Param;
+    cancelScheduledValues(startTime: Type.Time): Tone.Param;
+    rampTo(value: number, rampTime: Type.Time, startTime?: Type.Time): Tone.Param;
+    dispose(): Tone.Param;
+  }
+
+  let Phaser: {
     new(rate?: any, depth?: number, baseFrequency?: number): Tone.Phaser; //TODO: change 'any' to 'number | Object'
   };
 
@@ -888,8 +937,8 @@ declare module Tone {
     dispose(): Tone.Phaser;
   }
 
-  var PingPongDelay: {
-    new(delayTime?: any, feedback?: number): Tone.PingPongDelay; //TODO: Tone.Time || Object
+  let PingPongDelay: {
+    new(delayTime?: any, feedback?: number): Tone.PingPongDelay; //TODO: Type.Time || Object
   };
 
   interface PingPongDelay extends Tone.StereoXFeedbackEffect {
@@ -897,24 +946,26 @@ declare module Tone {
     dispose(): Tone.PingPongDelay;
   }
 
-  var Player: {
-    new(url?: string, onload?: (e: any) => any): Tone.Player; //todo: string | AudioBuffer
+  let Player: {
+    new(url: string | AudioBuffer, onload?: (e: any) => any): Tone.Player;
   };
 
   interface Player extends Tone.Source {
-    buffer: AudioBuffer;
+    autostart: boolean;
+    buffer: Tone.Buffer;
     duration: number;
     loop: boolean;
-    loopEnd: Tone.Time;
-    loopStart: Tone.Time;
+    loopEnd: Type.Time;
+    loopStart: Type.Time;
     playbackRate: number;
     retrigger: boolean;
     dispose(): Tone.Player;
     load(url: string, callback?: (e: any) => any): Tone.Player;
-    setLoopPoints(loopStart: Tone.Time, loopEnd: Tone.Time): Tone.Player;
+    seek(offset: Type.Time, time?: Type.Time): Tone.Player;
+    setLoopPoints(loopStart: Type.Time, loopEnd: Type.Time): Tone.Player;
   }
 
-  var PluckSynth: {
+  let PluckSynth: {
     new(options?: Object): Tone.PluckSynth;
   };
 
@@ -923,25 +974,26 @@ declare module Tone {
     dampening: Tone.Signal;
     resonance: Tone.Signal;
     dispose(): Tone.PluckSynth;
-    triggerAttack(note: any, time?: Tone.Time): Tone.PluckSynth; //todo: string | number
+    triggerAttack(note: any, time?: Type.Time): Tone.PluckSynth; //todo: string | number
   }
 
-  var PolySynth: {
-    new(voicesAmount?: any, voice?: () => any): Tone.PolySynth; // number | Object
+  let PolySynth: {
+    new(voicesAmount?: number | Object, voice?: () => any): Tone.PolySynth;
   };
 
   interface PolySynth extends Tone.Instrument {
     voices: any[];
+    detune: Tone.Signal;
+    set(params: Object, value?: number, rampTime?: Type.Time): Tone.PolySynth;
+    get(params?: any[]): Object;
+    releaseAll(time: Type.Time): Tone.PolySynth;
     dispose(): Tone.PolySynth;
-    get(params?: any[]);
-    set(params: Object);
-    setPreset(presetName: string): Tone.PolySynth;
-    triggerAttack(value: any, time?: Tone.Time, velocity?: number): Tone.PolySynth; //todo: string | number | Object| string[] | number[]
-    triggerAttackRelease(value: any, duration: Tone.Time, time?: Tone.Time, velocity?: number): Tone.PolySynth; //todo: string | number | Object | string[] | number[]
-    triggerRelease(value: any, time?: Tone.Time): Tone.PolySynth; //todo: string | number | Object | string[] | number[]
+    triggerAttack(notes: any, time?: Type.Time, velocity?: number): Tone.PolySynth; //todo: string | number | Object| string[] | number[]
+    triggerAttackRelease(notes: any, duration: Type.Time, time?: Type.Time, velocity?: number): Tone.PolySynth; //todo: string | number | Object | string[] | number[]
+    triggerRelease(notes: any, time?: Type.Time): Tone.PolySynth; //todo: string | number | Object | string[] | number[]
   }
 
-  var Pow: {
+  let Pow: {
     new(exp: number): Tone.Pow;
   };
 
@@ -950,7 +1002,7 @@ declare module Tone {
     dispose(): Tone.Pow;
   }
 
-  var PulseOscillator: {
+  let PulseOscillator: {
     new(frequency?: number, width?: number): Tone.PulseOscillator;
   };
 
@@ -962,7 +1014,7 @@ declare module Tone {
     dispose(): Tone.PulseOscillator;
   }
 
-  var PWMOscillator: {
+  let PWMOscillator: {
     new(frequency?: Tone.Frequency, modulationFrequency?: number): Tone.PWMOscillator;
   };
 
@@ -975,17 +1027,17 @@ declare module Tone {
     dispose(): Tone.PWMOscillator;
   }
 
-  var Route: {
+  let Route: {
     new(outputCount?: number): Tone.Route;
   };
 
   interface Route extends Tone.SignalBase {
     gate: Tone.Signal;
     dispose(): Tone.Route;
-    select(which?: number, time?: Tone.Time): Tone.Route;
+    select(which?: number, time?: Type.Time): Tone.Route;
   }
 
-  var Sampler: {
+  let Sampler: {
     new(urls: any, options?: Object): Tone.Sampler; //todo: Object | string
   };
 
@@ -997,11 +1049,11 @@ declare module Tone {
     player: Tone.Player;
     sample: any; //todo: number | string
     dispose(): Tone.Sampler;
-    triggerAttack(sample?: string, time?: Tone.Time, velocity?: number): Tone.Sampler;
-    triggerRelease(time?: Tone.Time): Tone.Sampler;
+    triggerAttack(sample?: string, time?: Type.Time, velocity?: number): Tone.Sampler;
+    triggerRelease(time?: Type.Time): Tone.Sampler;
   }
 
-  var Scale: {
+  let Scale: {
     new(outputMin?: number, outputMax?: number): Tone.Scale;
   };
 
@@ -1011,8 +1063,8 @@ declare module Tone {
     dispose(): Tone.Scale;
   }
 
-  var ScaledEnvelope: {
-    new(attack?: any, decay?: Tone.Time, sustain?: number, release?: Tone.Time): Tone.ScaledEnvelope; //TODO: Change 'any' to 'Tone.Time | Object'
+  let ScaledEnvelope: {
+    new(attack?: any, decay?: Type.Time, sustain?: number, release?: Type.Time): Tone.ScaledEnvelope; //TODO: Change 'any' to 'Type.Time | Object'
   };
 
   interface ScaledEnvelope extends Tone.Envelope {
@@ -1022,7 +1074,7 @@ declare module Tone {
     dispose(): Tone.ScaledEnvelope;
   }
 
-  var ScaleExp: {
+  let ScaleExp: {
     new(outputMin?: number, outputMax?: number, exponent?: number): Tone.ScaleExp;
   };
 
@@ -1033,44 +1085,41 @@ declare module Tone {
     dispose(): Tone.ScaleExp;
   }
 
-  var Select: {
+  let Select: {
     new(sourceCount?: number): Tone.Select;
   };
 
   interface Select extends Tone.SignalBase {
     gate: Tone.Signal;
     dispose(): Tone.Select;
-    select(which: number, time?: Tone.Time): Tone.Select;
+    select(which: number, time?: Type.Time): Tone.Select;
   }
 
   module Signal {
-    interface Unit {
-    }
-    interface Type {
-    }
+    type Type = 'number' | 'time' | 'frequency' | 'transportTime' | 'ticks' | 'normalRange' | 'audioRange' | 'db' | 'interval' | 'bpm' | 'positive' | 'cents' | 'degrees' | 'midi' | 'barsBeatsSixteenths' | 'samples' | 'hertz' | 'note' | 'milliseconds' | 'seconds' | 'notation';
   }
 
-  var Signal: {
-    new(value?: any, units?: Tone.Signal.Unit): Tone.Signal; //todo: number | AudioParam
+  let Signal: {
+    new(value?: number | AudioParam, units?: Tone.Signal.Type): Tone.Signal;
   };
 
-  interface Signal extends Tone.SignalBase {
+  interface Signal extends Tone.Param {
     units: Tone.Signal.Type;
-    value: any; //TODO: Tone.Time | Tone.Frequency | number
-    cancelScheduledValues(startTime: Tone.Time): Tone.Signal;
+    value: any; //TODO: Type.Time | Tone.Frequency | number
+    cancelScheduledValues(startTime: Type.Time): Tone.Signal;
     dispose(): Tone.Signal;
-    exponentialRampToValueAtTime(value: number, endTime: Tone.Time): Tone.Signal;
-    exponentialRampToValueNow(value: number, rampTime: Tone.Time): Tone.Signal;
-    linearRampToValueAtTime(value: number, endTime: Tone.Time): Tone.Signal;
-    linearRampToValueNow(value: number, rampTime: Tone.Time): Tone.Signal;
-    rampTo(value: number, rampTime: Tone.Time): Tone.Signal;
+    exponentialRampToValueAtTime(value: number, endTime: Type.Time): Tone.Signal;
+    exponentialRampToValueNow(value: number, rampTime: Type.Time): Tone.Signal;
+    linearRampToValueAtTime(value: number, endTime: Type.Time): Tone.Signal;
+    linearRampToValueNow(value: number, rampTime: Type.Time): Tone.Signal;
+    rampTo(value: number, rampTime: Type.Time): Tone.Signal;
     setCurrentValueNow(now?: number): Tone.Signal;
-    setTargetAtTime(value: number, startTime: Tone.Time, timeConstant: number): Tone.Signal;
-    setValueAtTime(value: number, time: Tone.Time): Tone.Signal;
-    setValueCurveAtTime(values: number[], startTime: Tone.Time, duration: Tone.Time): Tone.Signal;
+    setTargetAtTime(value: number, startTime: Type.Time, timeConstant: number): Tone.Signal;
+    setValueAtTime(value: number, time: Type.Time): Tone.Signal;
+    setValueCurveAtTime(values: number[], startTime: Type.Time, duration: Type.Time): Tone.Signal;
   }
 
-  var SignalBase: {
+  let SignalBase: {
     new(): Tone.SignalBase;
   };
 
@@ -1078,7 +1127,7 @@ declare module Tone {
     connect(node: any, outputNumber?: number, inputNumber?: number): Tone.SignalBase; //TODO: Change 'any' to 'AudioParam | AudioNode | Tone.Signal | Tone' when available
   }
 
-  var Source: {
+  let Source: {
     new(): Tone.Source;
   };
 
@@ -1088,9 +1137,9 @@ declare module Tone {
     state: Tone.Source.State;
     volume: Tone.Signal;
     dispose(): Tone.Source;
-    start(time?: Tone.Time): Tone.Source;
-    stop(time?: Tone.Time): Tone.Source;
-    sync(delay?: Tone.Time): Tone.Source;
+    start(time?: Type.Time): Tone.Source;
+    stop(time?: Type.Time): Tone.Source;
+    sync(delay?: Type.Time): Tone.Source;
     unsync(): Tone.Source;
   }
 
@@ -1099,7 +1148,7 @@ declare module Tone {
     }
   }
 
-  var Split: {
+  let Split: {
     new(): Tone.Split;
   };
 
@@ -1109,7 +1158,9 @@ declare module Tone {
     dispose(): Tone.Split;
   }
 
-  var StereoEffect: {
+  type State = 'started' | 'stopped' | 'paused';
+
+  let StereoEffect: {
     new(): Tone.StereoEffect;
   };
 
@@ -1119,7 +1170,7 @@ declare module Tone {
     dispose(): Tone.StereoEffect;
   }
 
-  var StereoFeedbackEffect: {
+  let StereoFeedbackEffect: {
     new(): Tone.StereoFeedbackEffect;
   };
 
@@ -1128,7 +1179,7 @@ declare module Tone {
     dispose(): Tone.StereoFeedbackEffect;
   }
 
-  var StereoWidener: {
+  let StereoWidener: {
     new(width?: any): Tone.StereoWidener; //TODO change 'any' to 'number | Object'
   };
 
@@ -1137,7 +1188,7 @@ declare module Tone {
     dispose(): Tone.StereoWidener;
   }
 
-  var StereoXFeedbackEffect: {
+  let StereoXFeedbackEffect: {
     new(): Tone.StereoXFeedbackEffect;
   };
 
@@ -1146,57 +1197,72 @@ declare module Tone {
     dispose(): Tone.StereoXFeedbackEffect;
   }
 
-  var Switch: {
+  let Switch: {
     new(): Tone.Switch;
   };
 
   interface Switch extends Tone.SignalBase {
     gate: Tone.Signal;
-    close(time: Tone.Time): Tone.Switch;
+    close(time: Type.Time): Tone.Switch;
     dispose(): Tone.Switch;
-    open(time: Tone.Time): Tone.Switch
+    open(time: Type.Time): Tone.Switch
   }
 
-  interface Time {
+  let TimelineSignal: {
+    new(value?: number | AudioParam, units?: Tone.Signal.Type): Tone.TimelineSignal;
+  };
+
+  interface TimelineSignal extends Tone.Param {
+    units: Tone.Signal.Type;
+    value: number;
+    setValueAtTime(value: number, startTime: Type.Time): Tone.TimelineSignal;
+    linearRampToValueAtTime(value: number, endTime: Type.Time): Tone.TimelineSignal;
+    exponentialRampToValueAtTime(value: number, endTime: Type.Time): Tone.TimelineSignal;
+    setTargetAtTime(value: number, startTime: Type.Time, timeConstant: number): Tone.TimelineSignal;
+    setValueCurveAtTime(values: number[], startTime: Type.Time, duration: Type.Time, scaling?: Type.NormalRange): Tone.TimelineSignal;
+    cancelScheduledValues(after: Type.Time): Tone.TimelineSignal;
+    setRampPoint(time: Type.Time): Tone.TimelineSignal;
+    linearRampToValueBetween(value: number, start: Type.Time, finish: Type.Time): Tone.TimelineSignal;
+    exponentialRampToValueBetween(value: number, start: Type.Time, finish: Type.Time): Tone.TimelineSignal;
+    getValueAtTime(time: Type.Time): number;
+    connect(node: Tone | AudioParam | AudioNode | Tone.Signal, output: number, input: number): Tone.TimelineSignal;
+    dispose(): Tone.TimelineSignal;
   }
 
-  var Transport: {
+  let Transport: {
     bpm: Tone.Signal;
     loop: boolean;
-    loopEnd: Tone.Time;
-    loopStart: Tone.Time;
-    position: string;
+    loopEnd: Type.Time;
+    loopStart: Type.Time;
+    position: Type.BarsBeatsSixteenths;
     PPQ: number;
-    readonly progress: number;
-    seconds: number;
-    state: TransportState;
+    readonly progress: Type.NormalRange;
+    seconds: Type.Seconds;
+    state: Tone.State;
     swing: number;
-    swingSubdivision: Tone.Time;
-    ticks: number;
+    swingSubdivision: Type.Notation;
+    ticks: Type.Ticks;
     timeSignature: number;
     clear(eventId: number): Tone.Transport;
-    cancel(after: Tone.Time): Tone.Transport;
+    cancel(after: Type.Time): Tone.Transport;
     dispose(): Tone.Transport;
-    nextSubdivision(subdivision: Tone.Time): number;
-    pause(time: Tone.Time): Tone.Transport;
-    schedule(callback: (e: any) => any, time: Tone.Time): number;
-    scheduleOnce(callback: (e: any) => any, time: Tone.Time): number;
-    scheduleRepeat(callback: (e: any) => any, interval: Tone.Time, startTime: Tone.Time, duration: Tone.Time): number;
-    setLoopPoints(startPosition: Tone.Time, endPosition: Tone.Time): Tone.Transport;
-    start(time?: Tone.Time, offset?: Tone.Time): Tone.Transport;
-    stop(time: Tone.Time): Tone.Transport;
+    nextSubdivision(subdivision: Type.Time): number;
+    pause(time: Type.Time): Tone.Transport;
+    schedule(callback: (e: any) => any, time: Type.Time): number;
+    scheduleOnce(callback: (e: any) => any, time: Type.Time): number;
+    scheduleRepeat(callback: (e: any) => any, interval: Type.Time, startTime: Type.Time, duration: Type.Time): number;
+    setLoopPoints(startPosition: Type.Time, endPosition: Type.Time): Tone.Transport;
+    start(time?: Type.Time, offset?: Type.Time): Tone.Transport;
+    stop(time: Type.Time): Tone.Transport;
     syncSignal(signal: Tone.Signal, ratio?: number): Tone.Transport;
     unsyncSignal(signal: Tone.Signal): Tone.Transport;
   };
 
   interface Transport extends Tone {
-
+    // Should interact directly with Transport singleton
   }
 
-  interface TransportState {
-  }
-
-  var Volume: {
+  let Volume: {
     new(decibels: number): Tone.Volume;
   };
 
@@ -1205,7 +1271,7 @@ declare module Tone {
     dispose(): Tone.Volume;
   }
 
-  var WaveShaper: {
+  let WaveShaper: {
     new(mapping: any, bufferLen?: number): Tone.WaveShaper; //TODO: change 'any' to 'Function | Array | number'
   };
 
@@ -1213,4 +1279,23 @@ declare module Tone {
     curve: number[];
     oversample: string;
   }
+}
+
+declare module Type {
+  type Time = number | string;
+  type Ticks = number; // The smallest unit of time the Transport supports.
+  type NormalRange = number; // [0, 1]
+  type AudioRange = number; // [-1, 1]
+  type Decibels = number;
+  type Interval = number; // half-steps; 12 = one octave
+  type Degrees = number; //[0, 360]
+  type MIDI = number; // MIDI note number
+  type BarsBeatsSixteenths = string; // Time expressed as Bars:Beats:Sixteenths
+  type Note = string; // Scientific Pitch Notation, e.g. A4
+  type Milliseconds = number;
+  type Seconds = number;
+  type Hertz = number;
+  type Frequency = number;
+  type Gain = number;
+  type Notation = string; // Duration relative to a measure, e.g. 4n, 2m, 8t
 }
