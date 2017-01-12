@@ -1250,7 +1250,7 @@ declare module Tone {
     pause(time: Type.Time): Tone.Transport;
     schedule(callback: (e: any) => any, time: Type.Time): number;
     scheduleOnce(callback: (e: any) => any, time: Type.Time): number;
-    scheduleRepeat(callback: (e: any) => any, interval: Type.Time, startTime: Type.Time, duration: Type.Time): number;
+    scheduleRepeat(callback: (e: any) => any, interval: Type.Time, startTime?: Type.Time, duration?: Type.Time): number;
     setLoopPoints(startPosition: Type.Time, endPosition: Type.Time): Tone.Transport;
     start(time?: Type.Time, offset?: Type.Time): Tone.Transport;
     stop(time: Type.Time): Tone.Transport;

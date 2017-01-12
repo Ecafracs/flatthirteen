@@ -9,6 +9,27 @@
   width: 1000px;
 }
 
+.overlay {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+}
+
+.counter {
+  background-color: #FFF;
+  border-radius: 50%;
+  font-size: 300px;
+  padding: 20px;
+  position: absolute;
+  text-align: center;
+  width: 400px;
+}
+
 .position {
   background-color: rgba(255,255,255,0.5);
   position: absolute;
@@ -26,9 +47,13 @@
   width: 100%;
 }
 
+.demo .strip {
+  background-color: #777;
+}
+
 .beat {
   align-items: center;
-  background-color: #009FFF;
+  background-color: #008FFF;
   display: inline-flex;
   flex: 1;
   height: 240px;
@@ -36,6 +61,10 @@
   position: relative;
   text-align: center;
   width: 25%;
+}
+
+.demo .beat {
+  background-color: #888;
 }
 
 .beat:not(:last-child):after {
