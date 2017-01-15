@@ -1,8 +1,8 @@
-/// <reference path="../../third_party/Tone.d.ts"/>
-
 import { Component, OnInit, } from '@angular/core';
 import { KickInstrument, SnareInstrument} from '../shared/instruments/instrument';
 import { Grid } from '../shared/grid/grid';
+
+import * as Tone from 'tone';
 
 /**
  * This class represents the lazy loaded A1Component.

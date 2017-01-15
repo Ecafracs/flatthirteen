@@ -1,4 +1,4 @@
-/// <reference path="../../../third_party/Tone.d.ts"/>
+import * as Tone from 'tone';
 
 export interface Instrument {
   play(): any;
