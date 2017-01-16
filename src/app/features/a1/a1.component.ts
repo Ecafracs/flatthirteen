@@ -9,7 +9,7 @@ import * as Tone from 'tone';
  */
 @Component({
   moduleId: module.id,
-  selector: 'a1',
+  selector: '.a1',
   templateUrl: 'a1.component.html',
   styleUrls: ['a1.component.css'],
 })

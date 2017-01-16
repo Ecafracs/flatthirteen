@@ -3,12 +3,8 @@
     content: none;
 }
 
-header {
-  margin: 20px 120px;
-
-  h1 {
-    color: #1777CB;
-  }
+h1 {
+  color: #1777CB;
 }
 
 .menu {
@@ -21,12 +17,15 @@ header {
     display: inline-block;
     color: #ccc;
     font-size: 16px;
-    font-weight: 800;
     line-height: 48px;
     margin-right: 50px;
     text-decoration: none;
     vertical-align: middle;
     cursor: pointer;
+
+    &.active-link {
+      font-weight: 800;
+    }
   }
 }
 

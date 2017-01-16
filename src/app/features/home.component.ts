@@ -9,7 +9,7 @@ import { UserActions } from '../user/user.actions';
 import { User } from '../user/user.model';
 
 @Component({
-  selector: 'my-home',
+  selector: '.home',
   templateUrl: './home.component.html',
   styles: [`#my-logout-button { background: #F44336 }`]
 })
@@ -21,28 +21,21 @@ export class HomeComponent implements OnDestroy, OnInit {
   user: User;
   user$: Observable<User>;
   constructor(
-    fb: FormBuilder,
     private store: Store<AppState>,
     private userActions: UserActions,
   ) {
-    this.form = fb.group({
-      name: ''
-    });
     this.user$ = this.store.select(state => state.user.user);
     this.user$.takeUntil(this.destroyed$)
       .subscribe(user => { this.user = user; });
   }
 
   ngOnInit() {
-    this.form.get('name').setValue(this.user.name);
   }
 
   clearName() {
     this.store.dispatch(this.userActions.editUser(
       Object.assign({}, this.user, { name: '' }
       )));
-
-    this.form.get('name').setValue('');
   }
 
   logout() {
